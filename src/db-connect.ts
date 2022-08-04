@@ -1,18 +1,16 @@
-import { DataSource } from 'typeorm'
+import { DataSource } from 'typeorm';
 
 export const dataSource = new DataSource({
-	name: 'default',
-	type: 'mysql',
-	host: process.env.DB_HOST,
-	port: +(process.env.DB_PORT || 3306),
-	username: process.env.DB_USER,
-	password: process.env.DB_PASSWORD,
-	database: process.env.DB_NAME,
-	synchronize: true, // false for production
-	logging: true,
-	entities: [
-		__dirname + '/entitys/*.js',
-	],
+  name: 'default',
+  type: 'mysql',
+  host: process.env.DB_HOST,
+  port: +(process.env.DB_PORT || 3306),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  synchronize: true, // false for production
+  logging: true,
+  entities: [__dirname + '/entitys/*.ts']
 });
 
 // export const dbInit = async (app) => {
