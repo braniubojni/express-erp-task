@@ -1,12 +1,13 @@
 import * as jwt from 'jsonwebtoken';
 import { ITokens } from '../common/interfaces';
 import { Token } from '../entitys/token-entity';
+import { ApiError } from '../exceptions/api-error';
 
 export class TokenService {
   public static generateTokens<T extends object>(payload: T): ITokens {
-    const accessToken = jwt.sign(
+    const bearerToken = jwt.sign(
       payload,
-      process.env.JWT_ACCESS_SECRET || 'Secret-default',
+      process.env.JWT_BEARER_SECRET || 'Secret-default',
       {
         expiresIn: '10m'
       }
@@ -20,9 +21,37 @@ export class TokenService {
     );
 
     return {
-      accessToken,
+      bearerToken,
       refreshToken
     };
+  }
+
+  public static validateBearerToken(
+    token: string
+  ): jwt.JwtPayload | null | string {
+    try {
+      const userData = jwt.verify(
+        token,
+        process.env.JWT_BEARER_SECRET || 'Secret-default'
+      );
+      return userData;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  public static validateRefreshToken(
+    token: string
+  ): jwt.JwtPayload | null | string {
+    try {
+      const userData = jwt.verify(
+        token,
+        process.env.JWT_REFRESH_SECRET || 'Secret-default'
+      );
+      return userData;
+    } catch (error) {
+      return null;
+    }
   }
 
   public static async saveToken(
@@ -35,5 +64,11 @@ export class TokenService {
     }
     const token = await Token.createData(userId, refresh_token);
     return token;
+  }
+
+  public static async getToken(userId: string): Promise<Token | null> {
+    const tokenData = await Token.getToken(userId);
+
+    return tokenData;
   }
 }

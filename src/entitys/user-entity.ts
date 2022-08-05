@@ -20,19 +20,18 @@ export class User {
   password: string;
 
   public static async getOne(userId: string): Promise<User | null> {
-    try {
-      const user = await dataSource.getRepository(User).findOne({
-        where: {
-          user_id: userId
-        }
-      });
-      return user;
-    } catch (error) {
-      return null;
-    }
+    const user = await dataSource.getRepository(User).findOne({
+      where: {
+        user_id: userId
+      }
+    });
+    return user;
   }
 
-  public static async createUser(userId: string, password: string): Promise<User> {
+  public static async createUser(
+    userId: string,
+    password: string
+  ): Promise<User> {
     try {
       const user = await dataSource.getRepository(User).save({
         user_id: userId,

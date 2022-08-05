@@ -36,14 +36,12 @@ export class Token {
     userId: string,
     refresh_token: string
   ): Promise<Token> {
-    const token = await dataSource.getRepository(Token).save({
-      user: {
-        user_id: userId
-      },
-      refresh_token: refresh_token
-    });
-
-    return token;
+    const token = await Token.getToken(userId);
+    if (token) {
+      token.refresh_token = refresh_token;
+      return await dataSource.getRepository(Token).save(token);
+    }
+    return await Token.createData(userId, refresh_token);
   }
 
   public static async createData(

@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { dataSource } from './db-connect';
 import { router } from './router';
 import { json } from 'body-parser';
+import errorMiddleware from './middlewares/error-middleware';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(json());
 app.use(cookieParser());
 app.use(cors());
 app.use(router);
+app.use(errorMiddleware);
 
 const start = async () => {
   try {
