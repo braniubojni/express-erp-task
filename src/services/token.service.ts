@@ -26,11 +26,12 @@ export class TokenService {
   }
 
   public static async saveToken(
-    userId: number,
+    userId: string,
     refresh_token: string
   ): Promise<Token> {
     const tokenData = await Token.getToken(userId);
     if (tokenData) {
+      console.log('tokenData___>', tokenData);
       return await Token.saveData(userId, refresh_token);
     }
     const token = await Token.createData(userId, refresh_token);

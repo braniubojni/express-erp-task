@@ -13,18 +13,18 @@ export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255, nullable: false })
+  @Column({ length: 1024, nullable: false })
   refresh_token: string;
 
-  @OneToOne((type) => User, (user) => user.token)
+  @OneToOne((type) => User)
   @JoinColumn()
   user: User;
 
-  public static async getToken(userId: number): Promise<Token | null> {
+  public static async getToken(userId: string): Promise<Token | null> {
     const token = await dataSource.getRepository(Token).findOne({
       where: {
         user: {
-          id: userId
+          user_id: userId
         }
       }
     });
@@ -33,12 +33,12 @@ export class Token {
   }
 
   public static async saveData(
-    userId: number,
+    userId: string,
     refresh_token: string
   ): Promise<Token> {
     const token = await dataSource.getRepository(Token).save({
       user: {
-        id: userId
+        user_id: userId
       },
       refresh_token: refresh_token
     });
@@ -47,16 +47,19 @@ export class Token {
   }
 
   public static async createData(
-    userId: number,
+    userId: string,
     refresh_token: string
   ): Promise<Token> {
-    const token = await dataSource.getRepository(Token).save({
-      user: {
-        id: userId
-      },
-      refresh_token: refresh_token
-    });
-
-    return token;
+    console.log(userId, refresh_token, '<-- userId, refresh_token\n');
+    const token = new Token();
+    token.refresh_token = refresh_token;
+    // const token = dataSource.getRepository(Token).save({
+    //   user: {
+    //     user_id: userId
+    //   },
+    //   refresh_token: refresh_token
+    // });
+    console.log(await token, '<-- token\n\n');
+    return await token;
   }
 }

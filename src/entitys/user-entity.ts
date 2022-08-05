@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { dataSource } from '../db-connect';
+import { Token } from './token-entity';
 
 @Entity()
 export class User {
@@ -11,8 +12,6 @@ export class User {
 
   @Column({ length: 255, nullable: false })
   password: string;
-
-  token: string;
 
   public static async getOne(
     userId: string,
