@@ -5,14 +5,15 @@ import { UserDto } from '../common/dtos/user.dto';
 import { ISignUpReturn } from '../common/interfaces';
 
 export class UserService {
-  static async signup(userId: string, password: string): Promise<ISignUpReturn> {
+  static async signup(
+    userId: string,
+    password: string
+  ): Promise<ISignUpReturn> {
     try {
-      console.log('Error 1')
       const user = await User.getOne(userId);
       if (user) {
         throw new Error('User with such identifier already exists');
       }
-      console.log('Error 2')
       /** Hashing plaing password */
       const hashPassword = await bcrypt.hash(password, 5);
       /** Creating new user */
@@ -25,9 +26,9 @@ export class UserService {
       return {
         ...tokens,
         user: userDto
-      }
+      };
     } catch (error) {
-      if(error instanceof Error) {
+      if (error instanceof Error) {
         throw new Error(error.message);
       }
     }

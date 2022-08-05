@@ -34,7 +34,6 @@ export class TokenService {
       return await Token.saveData(userId, refresh_token);
     }
     const token = await Token.createData(userId, refresh_token);
-    console.log(token, 'token\n');
     return token;
   }
 }
