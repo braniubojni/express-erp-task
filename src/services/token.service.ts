@@ -31,10 +31,10 @@ export class TokenService {
   ): Promise<Token> {
     const tokenData = await Token.getToken(userId);
     if (tokenData) {
-      console.log('tokenData___>', tokenData);
       return await Token.saveData(userId, refresh_token);
     }
     const token = await Token.createData(userId, refresh_token);
+    console.log(token, 'token\n');
     return token;
   }
 }

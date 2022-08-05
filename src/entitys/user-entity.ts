@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn
+} from 'typeorm';
 import { dataSource } from '../db-connect';
 import { Token } from './token-entity';
 
@@ -13,15 +19,11 @@ export class User {
   @Column({ length: 255, nullable: false })
   password: string;
 
-  public static async getOne(
-    userId: string,
-    password: string
-  ): Promise<User | null> {
+  public static async getOne(userId: string): Promise<User | null> {
     try {
       const user = await dataSource.getRepository(User).findOne({
         where: {
-          user_id: userId,
-          password: password
+          user_id: userId
         }
       });
       return user;
@@ -30,7 +32,7 @@ export class User {
     }
   }
 
-  public static async addUser(userId: string, password: string): Promise<User> {
+  public static async createUser(userId: string, password: string): Promise<User> {
     try {
       const user = await dataSource.getRepository(User).save({
         user_id: userId,

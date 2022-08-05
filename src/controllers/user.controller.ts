@@ -6,9 +6,8 @@ export class UserController {
   public static async signup(req: { body: { userId: string; password: string; }; }, res: ExpressReturnType) {
     try {
       const { userId, password } = req.body;
-      const userDto = new UserDto(userId, password);
-      const userData = await UserService.signup(userDto.userId, userDto.password);
-      console.log(userData, 'userData\n');
+      const userData = await UserService.signup(userId, password);
+
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,

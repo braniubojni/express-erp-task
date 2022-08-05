@@ -50,16 +50,15 @@ export class Token {
     userId: string,
     refresh_token: string
   ): Promise<Token> {
-    console.log(userId, refresh_token, '<-- userId, refresh_token\n');
-    const token = new Token();
-    token.refresh_token = refresh_token;
-    // const token = dataSource.getRepository(Token).save({
-    //   user: {
-    //     user_id: userId
-    //   },
-    //   refresh_token: refresh_token
-    // });
-    console.log(await token, '<-- token\n\n');
-    return await token;
+    const user = await User.getOne(userId);
+    if (!user) {
+      throw new Error('User with such identifier does not exist');
+    }
+    const token = await dataSource.getRepository(Token).save({
+      user,
+      refresh_token: refresh_token
+    });
+
+    return token;
   }
 }

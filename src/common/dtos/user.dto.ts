@@ -1,9 +1,7 @@
 export class UserDto {
   userId: string;
-  password: string;
 
-  constructor(userId: string, password: string) {
+  constructor(userId: string) {
     this.userId = userId;
-    this.password = password;
   }
 }

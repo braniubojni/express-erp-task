@@ -7,14 +7,17 @@ import { ISignUpReturn } from '../common/interfaces';
 export class UserService {
   static async signup(userId: string, password: string): Promise<ISignUpReturn> {
     try {
-      const user = await User.getOne(userId, password);
+      console.log('Error 1')
+      const user = await User.getOne(userId);
       if (user) {
         throw new Error('User with such identifier already exists');
       }
+      console.log('Error 2')
+      /** Hashing plaing password */
       const hashPassword = await bcrypt.hash(password, 5);
-      const newUser = await User.addUser(userId, hashPassword);
-
-      const userDto = new UserDto(newUser.user_id, newUser.password);
+      /** Creating new user */
+      const newUser = await User.createUser(userId, hashPassword);
+      const userDto = new UserDto(newUser.user_id);
       const tokens = TokenService.generateTokens({ ...userDto });
 
       await TokenService.saveToken(newUser.user_id, tokens.refreshToken);
