@@ -13,3 +13,8 @@ export interface ISignUpReturn extends ITokens {
 }
 
 export type ExpressReturnType = Response<any, Record<string, any>>;
+
+export interface IFindQuery {
+  skip?: number;
+  take?: number;
+}

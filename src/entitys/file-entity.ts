@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IFindQuery } from '../common/interfaces';
 import { dataSource } from '../db-connect';
 
 @Entity()
@@ -37,5 +38,15 @@ export class File {
     });
 
     return file;
+  }
+
+  public static async find(findQuery: IFindQuery) {
+    const { skip, take } = findQuery;
+    const files = await dataSource.getRepository(File).find({
+      skip,
+      take
+    });
+
+    return files;
   }
 }

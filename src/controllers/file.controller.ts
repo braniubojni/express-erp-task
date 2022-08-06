@@ -16,4 +16,18 @@ export class FileController {
       next(error);
     }
   }
+
+  public static async fileList(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { list_size = 10, page = 1 } = req.query;
+      const files = await FileService.fileList(+list_size, +page);
+      res.status(200).send(files);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

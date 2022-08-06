@@ -36,4 +36,12 @@ export class FileService {
       });
     }
   }
+
+  public static async fileList(list_size: number, page: number) {
+    const files = await File.find({
+      skip: list_size * (page - 1),
+      take: list_size
+    });
+    return files;
+  }
 }

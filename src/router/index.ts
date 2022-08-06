@@ -24,7 +24,7 @@ router.get('/logout', UserController.logout);
 router.get('/info', authMiddlewares, UserController.info);
 // File
 router.post('/file/upload', FileController.fileUpload);
-router.get('/file/list');
+router.get('/file/list', FileController.fileList);
 router.delete('/file/delete/:id');
 router.get('/file/:id');
 router.get('/file/download/:id');
