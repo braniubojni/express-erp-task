@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
-const router = Router();
 import { body } from 'express-validator';
 import authMiddlewares from '../middlewares/auth-middlewares';
 import { FileController } from '../controllers/file.controller';
+const router = Router();
 
 const bodyDto = [
   body('id')

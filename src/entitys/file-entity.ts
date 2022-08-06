@@ -7,7 +7,7 @@ export class File {
   id: number;
 
   @Column({ length: 1024, nullable: false })
-  name: string;
+  file_name: string;
 
   @Column({ length: 255, nullable: false })
   extension: string;
@@ -22,14 +22,14 @@ export class File {
   date_created: Date;
 
   public static async createFile(
-    name: string,
+    file_name: string,
     extension: string,
     mime_type: string,
     size: number,
     date_created: Date
   ): Promise<File> {
     const file = await dataSource.getRepository(File).save({
-      name,
+      file_name,
       extension,
       mime_type,
       size,

@@ -1,38 +1,43 @@
-import { NextFunction, Request } from 'express';
+import { Request } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { IFileUpload } from '../common/interfaces';
+import { File } from '../entitys/file-entity';
 import { ApiError } from '../exceptions/api-error';
 
 export class FileService {
-  public static async fileUpload({ req, name }: IFileUpload) {
-    // @ts-ignore
-    // Save in db
-    name;
-    return new Promise((resolve, reject) => {
-      const stream = fs.createWriteStream(filePath);
+  public static async fileUpload(req: Request) {
+    if (req.busboy) {
+      let fstream: fs.WriteStream;
+      req.pipe(req.busboy);
+      req.busboy.on('file', (fieldname, file, { filename, mimeType }) => {
+        const idx = filename.lastIndexOf('.');
+        const extension = filename.slice(idx + 1);
+        const fileName = filename.slice(0, idx);
+        const filePath = path.resolve(__dirname, '..', 'static', 'files');
+        if (!fs.existsSync(filePath)) {
+          fs.mkdirSync(filePath, { recursive: true });
+        }
+        fstream = fs.createWriteStream(path.resolve(filePath, filename));
+        file.pipe(fstream);
 
-      stream.on('open', () => {
-        console.log('Stream open ... 0.00%');
-        req.pipe(stream);
-      });
+        fstream.on('close', () => {
+          const date = new Date();
+          const size = fs.statSync(fstream.path).size;
+          File.createFile(fileName, extension, mimeType, size, date)
+            .then((file) => {
+              console.log('Saved');
+            })
+            .catch((err) => {
+              ApiError.BadRequest([
+                `Error while creating file: ${err.message}`
+              ]);
+            });
+        });
 
-      stream.on('drain', () => {
-        const written = parseInt(stream.bytesWritten.toString(), 10);
-        const total = parseInt(stream.bytesWritten.toString(), 10);
-        const pWritten = ((written / total) * 100).toFixed(2);
-        console.log(`Stream drain ... ${pWritten}% done`);
+        fstream.on('error', (err) => {
+          throw ApiError.BadRequest([err.message, 500]);
+        });
       });
-
-      stream.on('close', () => {
-        console.log('Stream open ... 100%');
-        resolve(filePath);
-      });
-
-      stream.on('error', (err) => {
-        next(ApiError.BadRequest([err.message]));
-        reject(err);
-      });
-    });
+    }
   }
 }

@@ -6,9 +6,11 @@ import { dataSource } from './db-connect';
 import { router } from './router';
 import { json } from 'body-parser';
 import errorMiddleware from './middlewares/error-middleware';
+import connectBusboy from 'connect-busboy';
 
 const app = express();
 // Middlewares
+app.use(connectBusboy());
 app.use(express.json());
 app.use(json());
 app.use(cookieParser());
