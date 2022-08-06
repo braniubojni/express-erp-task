@@ -8,8 +8,10 @@ export class FileController {
     next: NextFunction
   ) {
     try {
-      const fileResult = await FileService.fileUpload(req);
-      res.send('OK');
+      await FileService.fileUpload(req);
+      res.status(201).send({
+        message: 'File uploaded successfully'
+      });
     } catch (error) {
       next(error);
     }

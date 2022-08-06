@@ -14,24 +14,20 @@ export class FileService {
         const extension = filename.slice(idx + 1);
         const fileName = filename.slice(0, idx);
         const filePath = path.resolve(__dirname, '..', 'static', 'files');
+
         if (!fs.existsSync(filePath)) {
           fs.mkdirSync(filePath, { recursive: true });
         }
-        fstream = fs.createWriteStream(path.resolve(filePath, filename));
+
+        fstream = fs.createWriteStream(
+          path.resolve(filePath, filename.replace(' ', '_'))
+        );
         file.pipe(fstream);
 
-        fstream.on('close', () => {
+        fstream.on('close', async () => {
           const date = new Date();
           const size = fs.statSync(fstream.path).size;
-          File.createFile(fileName, extension, mimeType, size, date)
-            .then((file) => {
-              console.log('Saved');
-            })
-            .catch((err) => {
-              ApiError.BadRequest([
-                `Error while creating file: ${err.message}`
-              ]);
-            });
+          await File.createFile(fileName, extension, mimeType, size, date);
         });
 
         fstream.on('error', (err) => {
