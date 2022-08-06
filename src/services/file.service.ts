@@ -61,4 +61,13 @@ export class FileService {
       return fileInfo;
     }
   }
+
+  public static async findById(id: number): Promise<File | null> {
+    // Remove from db
+    const file = await File.findById(id);
+
+    if (!file) throw ApiError.NotFound(['File not found', 404]);
+
+    return file;
+  }
 }

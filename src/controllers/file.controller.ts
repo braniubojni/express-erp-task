@@ -45,4 +45,15 @@ export class FileController {
       next(error);
     }
   }
+
+  public static async getFile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const file = await FileService.findById(+id);
+
+      res.status(200).send(file);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

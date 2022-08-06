@@ -15,4 +15,8 @@ export class ApiError extends Error {
   static BadRequest(errors: any[]) {
     return new ApiError(400, 'Bad Request', errors);
   }
+
+  static NotFound(errors: any[]) {
+    return new ApiError(404, 'Not Found', errors);
+  }
 }
