@@ -3,6 +3,7 @@ import { UserController } from '../controllers/user.controller';
 const router = Router();
 import { body } from 'express-validator';
 import authMiddlewares from '../middlewares/auth-middlewares';
+import { FileController } from '../controllers/file.controller';
 
 const bodyDto = [
   body('id')
@@ -16,15 +17,17 @@ const bodyDto = [
 ];
 
 // User
-// @ts-ignore
 router.post('/signup', bodyDto[0], bodyDto[1], UserController.signup);
 router.post('/signin', bodyDto[0], bodyDto[1], UserController.signin);
 router.post('/signin/:new_token', UserController.signinNewToken);
 router.get('/logout', UserController.logout);
 router.get('/info', authMiddlewares, UserController.info);
-
 // File
-
-// Info
+router.post('/file/upload', FileController.fileUpload);
+router.get('/file/list');
+router.delete('/file/delete/:id');
+router.get('/file/:id');
+router.get('/file/download/:id');
+router.put('/file/update/:id');
 
 export { router };

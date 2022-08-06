@@ -8,12 +8,13 @@ import { json } from 'body-parser';
 import errorMiddleware from './middlewares/error-middleware';
 
 const app = express();
-
+// Middlewares
 app.use(express.json());
 app.use(json());
 app.use(cookieParser());
 app.use(cors());
 app.use(router);
+app.use('/static', express.static(__dirname + '/static'));
 app.use(errorMiddleware);
 
 const start = async () => {

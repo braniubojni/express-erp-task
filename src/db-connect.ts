@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { File } from './entitys/file-entity';
 import { Token } from './entitys/token-entity';
 import { User } from './entitys/user-entity';
 
@@ -11,5 +12,5 @@ export const dataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true, // false for production
   logging: false,
-  entities: [User, Token]
+  entities: [User, Token, File]
 });
