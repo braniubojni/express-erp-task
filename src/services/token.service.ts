@@ -1,7 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import { ITokens } from '../common/interfaces';
 import { Token } from '../entitys/token-entity';
-import { ApiError } from '../exceptions/api-error';
 
 export class TokenService {
   public static generateTokens<T extends object>(payload: T): ITokens {

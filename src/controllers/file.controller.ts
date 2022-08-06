@@ -62,9 +62,29 @@ export class FileController {
     res: Response,
     next: NextFunction
   ) {
-    const { id } = req.params;
-    const file = await FileService.downloadFile(+id);
+    try {
+      const { id } = req.params;
+      const file = await FileService.downloadFile(+id);
 
-    res.download(file);
+      res.download(file);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async updateFile(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      await FileService.updateFile(req);
+
+      res.status(200).send({
+        message: 'File patched'
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }

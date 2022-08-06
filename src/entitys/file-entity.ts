@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IFindQuery } from '../common/interfaces';
 import { dataSource } from '../db-connect';
+import { ApiError } from '../exceptions/api-error';
 
 @Entity()
 export class File {
@@ -40,6 +41,34 @@ export class File {
     return file;
   }
 
+  public static async updateById(
+    id: number,
+    file_name: string,
+    extension: string,
+    mime_type: string,
+    size: number,
+    date_created: Date
+  ): Promise<File | null> {
+    try {
+      let file = await this.findById(id);
+
+      if (file) {
+        file = {
+          ...file,
+          file_name,
+          extension,
+          mime_type,
+          size,
+          date_created
+        };
+        return await dataSource.getRepository(File).save(file);
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
   public static async find(findQuery: IFindQuery): Promise<File[]> {
     const { skip, take } = findQuery;
     const files = await dataSource.getRepository(File).find({
@@ -51,16 +80,19 @@ export class File {
   }
 
   public static async findById(id: number): Promise<File | null> {
-    const file = await dataSource.getRepository(File).findOneBy({ id });
+    try {
+      const file = await dataSource.getRepository(File).findOneBy({ id });
 
-    return file;
+      return file;
+    } catch (error) {
+      return null;
+    }
   }
 
   public static async removeById(id: number): Promise<File | null> {
-    const repo = dataSource.getRepository(File);
-    const file = await repo.findOneBy({ id });
+    const file = await this.findById(id);
     if (file) {
-      return await repo.remove(file);
+      return await dataSource.getRepository(File).remove(file);
     }
     return null;
   }

@@ -20,16 +20,16 @@ const bodyDto = [
 router.post('/signup', bodyDto[0], bodyDto[1], UserController.signup);
 router.post('/signin', bodyDto[0], bodyDto[1], UserController.signin);
 router.post('/signin/:new_token', UserController.signinNewToken);
-router.get('/logout', UserController.logout);
+router.get('/logout', authMiddlewares, UserController.logout);
 router.get('/info', authMiddlewares, UserController.info);
 // File
-router.post('/file/upload', FileController.fileUpload);
-router.delete('/file/delete/:id', FileController.fileDelete);
-
-router.get('/file/list', FileController.fileList);
-router.get('/file/download/:id', FileController.downloadFile);
-router.get('/file/:id', FileController.getFile);
-
-router.put('/file/update/:id');
+router.post('/file/upload', authMiddlewares, FileController.fileUpload);
+router.delete('/file/delete/:id', authMiddlewares, FileController.fileDelete);
+router.get('/file/list', authMiddlewares, FileController.fileList);
+router.get('/file/download/:id', authMiddlewares, FileController.downloadFile);
+router.get('/file/:id', authMiddlewares, FileController.getFile);
+router.put('/file/update/:id', authMiddlewares, FileController.updateFile);
+// Unknown route latency
+router.get('/latency', authMiddlewares);
 
 export { router };

@@ -11,6 +11,16 @@ export class FileService {
     'static',
     'files'
   );
+
+  private static removeStaticFile(fileInfo: File): File {
+    const { file_name, extension } = fileInfo;
+    const filePath = `${this.filesPath}/${file_name}.${extension}`;
+    // Remove local
+    fs.unlinkSync(filePath);
+
+    return fileInfo;
+  }
+
   public static async fileUpload(req: Request) {
     if (req.busboy) {
       let fstream: fs.WriteStream;
@@ -53,13 +63,9 @@ export class FileService {
     // Remove from db
     const fileInfo = await File.removeById(id);
     if (fileInfo) {
-      const { file_name, extension } = fileInfo;
-      const filePath = `${this.filesPath}/${file_name}.${extension}`;
-      // Remove local
-      fs.unlinkSync(filePath);
-
-      return fileInfo;
+      this.removeStaticFile(fileInfo);
     }
+    throw ApiError.NotFound(['File not found', 404]);
   }
 
   public static async findById(id: number): Promise<File | null> {
@@ -80,5 +86,47 @@ export class FileService {
       return filePath;
     }
     throw ApiError.NotFound(['File not found', 404]);
+  }
+
+  public static async updateFile(req: Request) {
+    const dbFile = await File.findById(+req.params.id);
+    if (!dbFile) throw ApiError.NotFound(['File not found', 404]);
+    if (req.busboy) {
+      let fstream: fs.WriteStream;
+      req.pipe(req.busboy);
+      req.busboy.on('file', (fieldname, file, { filename, mimeType }) => {
+        filename = filename.replace(' ', '_');
+        const idx = filename.lastIndexOf('.');
+        const newExtension = filename.slice(idx + 1);
+        const newFileName = filename.slice(0, idx);
+
+        if (!fs.existsSync(this.filesPath)) {
+          throw ApiError.BadRequest(['Files folder not found', 500]);
+        }
+
+        fstream = fs.createWriteStream(path.resolve(this.filesPath, filename));
+        file.pipe(fstream);
+
+        fstream.on('close', async () => {
+          const newDate = new Date();
+          const newSize = fs.statSync(fstream.path).size;
+
+          this.removeStaticFile(dbFile);
+
+          const data = await File.updateById(
+            dbFile.id,
+            newFileName,
+            newExtension,
+            mimeType,
+            newSize,
+            newDate
+          );
+        });
+
+        fstream.on('error', (err) => {
+          throw ApiError.BadRequest([err.message, 500]);
+        });
+      });
+    }
   }
 }

@@ -15,8 +15,15 @@ app.use(express.json());
 app.use(json());
 app.use(cookieParser());
 app.use(cors());
+
+app.all('/', function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  next();
+});
+
 app.use(router);
-app.use('/static', express.static(__dirname + '/static'));
+app.use(express.static(__dirname + '/static'));
 app.use(errorMiddleware);
 
 const start = async () => {
