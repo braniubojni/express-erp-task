@@ -24,10 +24,12 @@ router.get('/logout', UserController.logout);
 router.get('/info', authMiddlewares, UserController.info);
 // File
 router.post('/file/upload', FileController.fileUpload);
-router.get('/file/list', FileController.fileList);
 router.delete('/file/delete/:id', FileController.fileDelete);
+
+router.get('/file/list', FileController.fileList);
+router.get('/file/download/:id', FileController.downloadFile);
 router.get('/file/:id', FileController.getFile);
-router.get('/file/download/:id');
+
 router.put('/file/update/:id');
 
 export { router };

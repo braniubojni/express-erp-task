@@ -56,4 +56,15 @@ export class FileController {
       next(error);
     }
   }
+
+  public static async downloadFile(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { id } = req.params;
+    const file = await FileService.downloadFile(+id);
+
+    res.download(file);
+  }
 }

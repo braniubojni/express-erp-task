@@ -70,4 +70,15 @@ export class FileService {
 
     return file;
   }
+
+  public static async downloadFile(id: number): Promise<string> {
+    const file = await File.findById(id);
+
+    if (file) {
+      const { file_name, extension } = file;
+      const filePath = `${this.filesPath}/${file_name}.${extension}`;
+      return filePath;
+    }
+    throw ApiError.NotFound(['File not found', 404]);
+  }
 }
