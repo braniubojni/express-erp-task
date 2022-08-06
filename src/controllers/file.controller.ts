@@ -30,4 +30,19 @@ export class FileController {
       next(error);
     }
   }
+
+  public static async fileDelete(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const removedFile = await FileService.removeFile(+id);
+
+      res.status(202).send(removedFile);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

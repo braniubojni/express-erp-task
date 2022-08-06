@@ -25,7 +25,7 @@ router.get('/info', authMiddlewares, UserController.info);
 // File
 router.post('/file/upload', FileController.fileUpload);
 router.get('/file/list', FileController.fileList);
-router.delete('/file/delete/:id');
+router.delete('/file/delete/:id', FileController.fileDelete);
 router.get('/file/:id');
 router.get('/file/download/:id');
 router.put('/file/update/:id');

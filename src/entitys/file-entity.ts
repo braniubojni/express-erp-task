@@ -40,7 +40,7 @@ export class File {
     return file;
   }
 
-  public static async find(findQuery: IFindQuery) {
+  public static async find(findQuery: IFindQuery): Promise<File[]> {
     const { skip, take } = findQuery;
     const files = await dataSource.getRepository(File).find({
       skip,
@@ -48,5 +48,20 @@ export class File {
     });
 
     return files;
+  }
+
+  public static async findById(id: number): Promise<File | null> {
+    const file = await dataSource.getRepository(File).findOneBy({ id });
+
+    return file;
+  }
+
+  public static async removeById(id: number): Promise<File | null> {
+    const repo = dataSource.getRepository(File);
+    const file = await repo.findOneBy({ id });
+    if (file) {
+      return await repo.remove(file);
+    }
+    return null;
   }
 }

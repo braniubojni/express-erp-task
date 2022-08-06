@@ -5,23 +5,27 @@ import { File } from '../entitys/file-entity';
 import { ApiError } from '../exceptions/api-error';
 
 export class FileService {
+  public static filesPath: string = path.resolve(
+    __dirname,
+    '..',
+    'static',
+    'files'
+  );
   public static async fileUpload(req: Request) {
     if (req.busboy) {
       let fstream: fs.WriteStream;
       req.pipe(req.busboy);
       req.busboy.on('file', (fieldname, file, { filename, mimeType }) => {
+        filename = filename.replace(' ', '_');
         const idx = filename.lastIndexOf('.');
         const extension = filename.slice(idx + 1);
         const fileName = filename.slice(0, idx);
-        const filePath = path.resolve(__dirname, '..', 'static', 'files');
 
-        if (!fs.existsSync(filePath)) {
-          fs.mkdirSync(filePath, { recursive: true });
+        if (!fs.existsSync(this.filesPath)) {
+          fs.mkdirSync(this.filesPath, { recursive: true });
         }
 
-        fstream = fs.createWriteStream(
-          path.resolve(filePath, filename.replace(' ', '_'))
-        );
+        fstream = fs.createWriteStream(path.resolve(this.filesPath, filename));
         file.pipe(fstream);
 
         fstream.on('close', async () => {
@@ -43,5 +47,18 @@ export class FileService {
       take: list_size
     });
     return files;
+  }
+
+  public static async removeFile(id: number) {
+    // Remove from db
+    const fileInfo = await File.removeById(id);
+    if (fileInfo) {
+      const { file_name, extension } = fileInfo;
+      const filePath = `${this.filesPath}/${file_name}.${extension}`;
+      // Remove local
+      fs.unlinkSync(filePath);
+
+      return fileInfo;
+    }
   }
 }
