@@ -6,14 +6,14 @@ export class TokenService {
   public static generateTokens<T extends object>(payload: T): ITokens {
     const bearerToken = jwt.sign(
       payload,
-      process.env.JWT_BEARER_SECRET || 'Secret-default',
+      process.env.JWT_BEARER_SECRET || 'Secret-default-098',
       {
         expiresIn: '10m'
       }
     );
     const refreshToken = jwt.sign(
       payload,
-      process.env.JWT_REFRESH_SECRET || 'Secret-default',
+      process.env.JWT_REFRESH_SECRET || 'Secret-default-567',
       {
         expiresIn: '30d'
       }

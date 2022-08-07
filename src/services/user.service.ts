@@ -58,12 +58,16 @@ export class UserService {
     return await this.generateTokens(userId);
   }
 
-  static async logout({ userId }: UserDto) {
+  static async logout({ userId }: UserDto): Promise<ISignUpReturn> {
     const tokens = await this.generateTokens(userId);
+    await Token.saveData(userId, tokens.refreshToken);
     return tokens;
   }
 
-  static async refresh(refreshToken: string, userId: string) {
+  static async refresh(
+    refreshToken: string,
+    userId: string
+  ): Promise<ISignUpReturn> {
     if (!refreshToken) throw ApiError.BadRequest(['No refresh token']);
     const userData = TokenService.validateRefreshToken(refreshToken);
     const tokenFromDb = await Token.getToken(userId);
@@ -75,7 +79,7 @@ export class UserService {
     return await this.generateTokens(userId);
   }
 
-  static async info(userId: string) {
+  static async info(userId: string): Promise<UserDto> {
     const user = await User.getOne(userId);
     if (!user) {
       throw ApiError.BadRequest(['User with such identifier does not exist']);
